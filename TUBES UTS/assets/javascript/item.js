@@ -1,11 +1,10 @@
 let currentPage = 1;
 const itemsPerPage = 56;
-let cachedItems = []; // Array to cache fetched items
+let cachedItems = [];
 
 function fetchItems(page) {
-  // Check if items are already cached for the requested page
   if (cachedItems[page]) {
-    renderItems(cachedItems[page]); // If cached, render items from cache
+    renderItems(cachedItems[page]);
   } else {
     const endpoint = `https://pokeapi.co/api/v2/item?limit=${itemsPerPage}&offset=${(page - 1) * itemsPerPage}`;
     fetch(endpoint)
@@ -13,41 +12,37 @@ function fetchItems(page) {
       .then((data) => {
         let result = data.results;
 
-        // Fetch category information for each item
         Promise.all(result.map(item => fetch(item.url).then(response => response.json())))
           .then(items => {
-            // Sort items based on their categories
             items.sort((a, b) => a.category.name.localeCompare(b.category.name));
 
-            // Cache fetched items
+            
             cachedItems[page] = items;
 
-            renderItems(items); // Render items
+            renderItems(items);
           });
       });
   }
 }
 
-// Function to render items
+
 function renderItems(items) {
-  let cards = ""; // Variable to store the generated cards
+  let cards = "";
   items.forEach(item => {
     let itemImage = item.sprites.default;
     let itemName = item.name;
-    cards += showCard(itemName, itemImage); // Add the card to the cards variable
+    cards += showCard(itemName, itemImage);
   });
 
   const pokemonContainer = document.querySelector("#pokemon-list");
-  pokemonContainer.innerHTML = cards; // Update the HTML content with the generated cards
+  pokemonContainer.innerHTML = cards;
 }
 
-// Function to load the next page of items
 function loadNextPage() {
   currentPage++;
   fetchItems(currentPage);
 }
 
-// Initial load of items
 fetchItems(currentPage);
 
 function showCard(itemName, itemImage) {
