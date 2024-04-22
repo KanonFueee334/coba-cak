@@ -2,6 +2,7 @@ let currentPage = 1;
 const itemsPerPage = 56;
 let cachedItems = [];
 
+//puki
 function fetchItems(page) {
   if (cachedItems[page]) {
     renderItems(cachedItems[page]);
